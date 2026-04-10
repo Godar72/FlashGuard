@@ -25,7 +25,7 @@ const PERIOD_MAP = {
     "15m": "3mo",
     "30m": "3mo",
     "1h":  "6mo",
-    "1d":  "2y",
+    "1d":  "5y",
     "1wk": "10y",
     "1mo": "10y",
 };
@@ -560,9 +560,9 @@ function drawCandleChart(ohlc) {
         "15m": 26,   // ~1 trading day
         "30m": 13,   // ~1 trading day
         "1h":  30,   // ~1 month
-        "1d":  30,   // ~1 month
-        "1wk": 26,   // ~6 months
-        "1mo": 24,   // ~2 years
+        "1d":  1250, // ~5 years
+        "1wk": 260,  // ~5 years
+        "1mo": 60,   // ~5 years
     };
     const barsToShow = DEFAULT_BARS[currentInterval] || 30;
 
