@@ -16,6 +16,7 @@ let selectedFile     = null;
 let selectedInstrumentKey = null;
 let searchDebounceTimer   = null;
 let timelinePeriod   = "6mo";
+let serverTokenActive = false;  // true when server has a pre-configured token
 const scanHistory    = [];
 
 // ── Interval → period mapping ─────────────────────────────────────────────────
@@ -112,8 +113,28 @@ function initIntervalPills() {
 }
 
 // ── Token ─────────────────────────────────────────────────────────────────────
-function initTokenInput() {
+async function initTokenInput() {
     const inp = document.getElementById("tokenInput");
+    const tokenSection = inp?.closest(".token-section");
+
+    // Check if server has a pre-configured Analytics Token
+    try {
+        const res = await fetch(`${API}/api/token-status`);
+        const data = await res.json();
+        if (data.has_server_token) {
+            serverTokenActive = true;
+            // Hide manual input, show server token badge
+            if (inp) inp.style.display = "none";
+            const badge = document.getElementById("serverTokenBadge");
+            if (badge) badge.style.display = "block";
+            updateTokenStatus("__server__");
+            return;
+        }
+    } catch (e) {
+        // Server not reachable yet, fall back to manual mode
+    }
+
+    // Manual token mode (fallback)
     const saved = localStorage.getItem(UPSTOX_TOKEN_KEY);
     if (saved) { inp.value = saved; updateTokenStatus(saved); }
     inp.addEventListener("input", () => {
@@ -126,7 +147,10 @@ function initTokenInput() {
 function updateTokenStatus(token) {
     const el = document.getElementById("tokenStatus");
     if (!el) return;
-    if (token && token.length > 20) {
+    if (token === "__server__") {
+        el.innerHTML = '<span style="color:var(--safe)">✓ Server Token Active</span> — auto Upstox live data';
+        el.className = "token-status ok";
+    } else if (token && token.length > 20) {
         el.textContent = "✓ Token set — using Upstox live data";
         el.className   = "token-status ok";
     } else {
@@ -136,6 +160,8 @@ function updateTokenStatus(token) {
 }
 
 function getToken() {
+    // When server has its own token, send empty — backend uses UPSTOX_ANALYTICS_TOKEN
+    if (serverTokenActive) return "__server__";
     return document.getElementById("tokenInput")?.value.trim() || localStorage.getItem(UPSTOX_TOKEN_KEY) || "";
 }
 

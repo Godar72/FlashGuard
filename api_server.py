@@ -12,7 +12,7 @@ Run:
     → http://localhost:5000
 """
 
-import gzip, io, sys, traceback, time, random, json, threading
+import gzip, io, os, sys, traceback, time, random, json, threading
 from datetime import date, timedelta, datetime
 from pathlib import Path
 
@@ -66,8 +66,15 @@ CORS(app)
 # ── Upstox config ─────────────────────────────────────────────────────────────
 UPSTOX_BASE = "https://api.upstox.com/v2"
 
-# Default token — can be overridden per-request
-DEFAULT_TOKEN = ""   # User pastes token in the UI; this is the hardcoded fallback
+# Default token — reads from environment variable (Analytics Token, 1-year validity)
+# Set UPSTOX_ANALYTICS_TOKEN in your deployment environment (Hugging Face Secrets, Render env, etc.)
+DEFAULT_TOKEN = os.environ.get("UPSTOX_ANALYTICS_TOKEN", "")
+
+def _resolve_token(token_from_request):
+    """Resolve token: '__server__' sentinel → server's DEFAULT_TOKEN, else use as-is."""
+    if not token_from_request or token_from_request == "__server__":
+        return DEFAULT_TOKEN
+    return token_from_request
 
 # ── Dynamic Upstox instrument master ──────────────────────────────────────────
 INSTRUMENT_LIST_URL = "https://assets.upstox.com/market-quote/instruments/exchange/complete.json.gz"
@@ -502,6 +509,12 @@ def health():
     return jsonify({"status":"ok","keras":KERAS_OK,
                     "models":_discover(),"loaded":list(_loaded.keys())})
 
+@app.route("/api/token-status")
+def token_status():
+    """Check if the server has a pre-configured Upstox token (Analytics Token)."""
+    has_token = bool(DEFAULT_TOKEN and len(DEFAULT_TOKEN) > 20)
+    return jsonify({"has_server_token": has_token})
+
 @app.route("/api/models")
 def list_models():
     out = []
@@ -519,7 +532,7 @@ def market_overview():
     """Live market overview — indices + top stocks."""
     try:
         d     = request.json or {}
-        token = d.get("token") or DEFAULT_TOKEN
+        token = _resolve_token(d.get("token"))
         if not token:
             return jsonify({"error":"Upstox token required","data":[]}), 400
         data = _market_overview(token)
@@ -535,7 +548,7 @@ def quote():
     try:
         d      = request.json or {}
         ticker = d.get("ticker","RELIANCE")
-        token  = d.get("token") or DEFAULT_TOKEN
+        token  = _resolve_token(d.get("token"))
         ikey   = _resolve_instrument_key(ticker, d.get("instrument_key"))
         if not ikey:
             return jsonify({"error":f"Ticker {ticker} not found in instruments"}), 400
@@ -556,7 +569,7 @@ def predict():
         period     = d.get("period","6mo")
         interval   = d.get("interval","1d")
         threshold  = float(d.get("threshold",0.20))
-        token      = d.get("token") or d.get("upstox_token") or DEFAULT_TOKEN
+        token      = _resolve_token(d.get("token") or d.get("upstox_token"))
         inst_key   = d.get("instrument_key") or None
 
         model      = _load(model_name)
@@ -639,7 +652,7 @@ def portfolio():
         period     = d.get("period","6mo")
         interval   = d.get("interval","1d")
         threshold  = float(d.get("threshold",0.20))
-        token      = d.get("token") or d.get("upstox_token") or DEFAULT_TOKEN
+        token      = _resolve_token(d.get("token") or d.get("upstox_token"))
 
         model  = _load(model_name); ts,nf = _sig(model)
         results = []
@@ -669,7 +682,7 @@ def rolling_risk():
         ticker     = d.get("ticker", "RELIANCE")
         period     = d.get("period", "6mo")
         interval   = d.get("interval", "1d")
-        token      = d.get("token") or DEFAULT_TOKEN
+        token      = _resolve_token(d.get("token"))
         inst_key   = d.get("instrument_key") or None
         threshold  = float(d.get("threshold", 0.20))
         model_name = d.get("model") or _best()
@@ -737,6 +750,7 @@ if __name__ == "__main__":
     found = _discover()
     print(f"  Models   : {found}")
     print(f"  Frontend : {FRONTEND}")
+    print(f"  Upstox   : {'✓ Analytics Token configured' if DEFAULT_TOKEN else '✗ No token — set UPSTOX_ANALYTICS_TOKEN env var'}")
     print(f"  URL      : http://localhost:5000")
     print(f"  Dashboard: http://localhost:5000/dashboard.html")
     print("="*62)

@@ -325,6 +325,10 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;back
     <div class="watchlist" id="watchlist"></div>
     <div class="token-section">
       <label>Upstox Access Token</label>
+      <div id="serverTokenBadge" style="display:none;padding:6px 10px;background:var(--safe-dim);border:1px solid rgba(0,255,157,.2);margin-bottom:6px">
+        <span style="font-family:var(--font-m);font-size:.75rem;color:var(--safe);letter-spacing:.06em">✓ SERVER TOKEN ACTIVE</span>
+        <div style="font-family:var(--font-m);font-size:.65rem;color:var(--text-3);margin-top:2px">Analytics Token · auto-configured</div>
+      </div>
       <input id="tokenInput" type="password" placeholder="Paste token here…" autocomplete="off"/>
       <div class="token-status" id="tokenStatus">Enter token for live data</div>
     </div>
