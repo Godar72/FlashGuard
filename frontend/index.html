@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FlashGuard — Quantum Flash Crash Intelligence</title>
-  <meta name="description" content="BiGRU + Attention neural networks. 15.9M NIFTY bars. Flash crash prediction before the market reacts." />
+  <meta name="description" content="BiGRU + Attention neural networks. 94.3% AUC. Flash crash prediction before the market reacts." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -547,8 +547,8 @@
         <span class="h-dim">BEFORE THE MARKET REACTS</span>
       </h1>
       <p class="hero-sub">
-        BiGRU + Attention neural networks trained on <strong>15.9M NIFTY bars</strong>.
-        Sub-50ms inference. <strong>99.1% AUC</strong> on held-out crash events.
+        BiGRU + Attention neural networks with <strong>102K parameters</strong>.
+        Sub-second inference. <strong>94.3% AUC</strong> on held-out crash events.
         Real-time NSE scanning via Upstox API.
       </p>
       <div class="hero-actions">
@@ -557,19 +557,19 @@
       </div>
       <div class="hero-stats">
         <div class="h-stat">
-          <div class="h-stat-v"><span class="ac">15.9</span>M</div>
-          <div class="h-stat-l">NIFTY BARS</div>
+          <div class="h-stat-v"><span class="ac">102</span>K</div>
+          <div class="h-stat-l">PARAMETERS</div>
         </div>
         <div class="h-stat">
-          <div class="h-stat-v"><span class="ac">99.1</span>%</div>
+          <div class="h-stat-v"><span class="ac">94.3</span>%</div>
           <div class="h-stat-l">AUC SCORE</div>
         </div>
         <div class="h-stat">
-          <div class="h-stat-v"><span class="ac">&lt;50</span>ms</div>
+          <div class="h-stat-v"><span class="ac">&lt;1</span>s</div>
           <div class="h-stat-l">INFERENCE</div>
         </div>
         <div class="h-stat">
-          <div class="h-stat-v"><span class="ac">14</span></div>
+          <div class="h-stat-v"><span class="ac">10</span></div>
           <div class="h-stat-l">FEATURES</div>
         </div>
       </div>
@@ -627,7 +627,7 @@
     <div class="feat-card">
       <div class="feat-icon" style="border-color:rgba(0,210,255,.25);color:var(--cyan);">📡</div>
       <div class="feat-title">Real-Time Monitor</div>
-      <div class="feat-desc">Sub-50ms inference on live NSE ticks. Stream price action and crash probability simultaneously via Upstox or yFinance feeds.</div>
+      <div class="feat-desc">Sub-second inference on live NSE ticks. Stream price action and crash probability simultaneously via Upstox or yFinance feeds.</div>
       <div class="feat-tag">LIVE INFERENCE</div>
     </div>
     <div class="feat-card">
@@ -639,7 +639,7 @@
     <div class="feat-card">
       <div class="feat-icon" style="border-color:rgba(255,199,44,.2);color:var(--warn);">📄</div>
       <div class="feat-title">CSV Analysis</div>
-      <div class="feat-desc">Drop any OHLCV CSV — the model extracts 14 engineered features and returns a full risk profile in milliseconds.</div>
+      <div class="feat-desc">Drop any OHLCV CSV — the model extracts 10 engineered features and returns a full risk profile in under a second.</div>
       <div class="feat-tag">OFFLINE MODE</div>
     </div>
     <div class="feat-card">
@@ -676,13 +676,13 @@
           <div class="arch-layer">
             <div class="arch-layer-bar" style="background:var(--cyan)"></div>
             <div class="arch-layer-name">INPUT LAYER</div>
-            <div class="arch-layer-detail">(timesteps × 14 features)</div>
+            <div class="arch-layer-detail">(30 × 10 features)</div>
           </div>
           <div class="arch-connector"><span>↓ standardized features</span></div>
           <div class="arch-layer">
             <div class="arch-layer-bar" style="background:var(--nova)"></div>
-            <div class="arch-layer-name">BIGRU LAYER × 2</div>
-            <div class="arch-layer-detail">bidirectional · 128 units</div>
+            <div class="arch-layer-name">BIGRU + GRU</div>
+            <div class="arch-layer-detail">bidirectional · 96 + 48 units</div>
           </div>
           <div class="arch-connector"><span>↓ temporal encoding</span></div>
           <div class="arch-layer">
@@ -694,7 +694,7 @@
           <div class="arch-layer">
             <div class="arch-layer-bar" style="background:var(--warn)"></div>
             <div class="arch-layer-name">DENSE + DROPOUT</div>
-            <div class="arch-layer-detail">64 units · 0.3 dropout</div>
+            <div class="arch-layer-detail">32 units · 0.2 dropout</div>
           </div>
           <div class="arch-connector"><span>↓ classification</span></div>
           <div class="arch-layer">
@@ -707,27 +707,27 @@
     </div>
     <div class="metrics-grid">
       <div class="m-item">
-        <div class="m-head"><span class="m-name">ROC-AUC SCORE</span><span class="m-val">99.1%</span></div>
-        <div class="m-bar-bg"><div class="m-bar" style="width:99.1%"></div></div>
+        <div class="m-head"><span class="m-name">ROC-AUC SCORE</span><span class="m-val">94.3%</span></div>
+        <div class="m-bar-bg"><div class="m-bar" style="width:94.3%"></div></div>
       </div>
       <div class="m-item">
-        <div class="m-head"><span class="m-name">PRECISION</span><span class="m-val">97.8%</span></div>
-        <div class="m-bar-bg"><div class="m-bar" style="width:97.8%"></div></div>
+        <div class="m-head"><span class="m-name">PRECISION</span><span class="m-val">88.1%</span></div>
+        <div class="m-bar-bg"><div class="m-bar" style="width:88.1%"></div></div>
       </div>
       <div class="m-item">
-        <div class="m-head"><span class="m-name">RECALL</span><span class="m-val">96.4%</span></div>
-        <div class="m-bar-bg"><div class="m-bar" style="width:96.4%"></div></div>
+        <div class="m-head"><span class="m-name">RECALL</span><span class="m-val">93.0%</span></div>
+        <div class="m-bar-bg"><div class="m-bar" style="width:93.0%"></div></div>
       </div>
       <div class="m-item">
-        <div class="m-head"><span class="m-name">F1 SCORE</span><span class="m-val">97.1%</span></div>
-        <div class="m-bar-bg"><div class="m-bar" style="width:97.1%"></div></div>
+        <div class="m-head"><span class="m-name">F1 SCORE</span><span class="m-val">70.6%</span></div>
+        <div class="m-bar-bg"><div class="m-bar" style="width:70.6%"></div></div>
       </div>
       <div class="m-item">
-        <div class="m-head"><span class="m-name">TRAINING BARS</span><span class="m-val">15.9M</span></div>
-        <div class="m-bar-bg"><div class="m-bar" style="width:100%"></div></div>
+        <div class="m-head"><span class="m-name">SPECIFICITY</span><span class="m-val">78.3%</span></div>
+        <div class="m-bar-bg"><div class="m-bar" style="width:78.3%"></div></div>
       </div>
       <div class="m-item">
-        <div class="m-head"><span class="m-name">INFERENCE TIME</span><span class="m-val">&lt;50ms</span></div>
+        <div class="m-head"><span class="m-name">INFERENCE TIME</span><span class="m-val">&lt;1s</span></div>
         <div class="m-bar-bg"><div class="m-bar" style="width:95%"></div></div>
       </div>
     </div>
@@ -777,7 +777,7 @@
   <div class="cta-inner reveal">
     <div class="sec-label" style="justify-content:center;">DEPLOY NOW</div>
     <h2 class="cta-h">PROTECT YOUR<br/><span class="ac">PORTFOLIO TODAY</span></h2>
-    <p class="cta-sub">Launch the terminal and run AI-powered crash predictions on any NSE stock — real-time, under 50 milliseconds, zero compromise.</p>
+    <p class="cta-sub">Launch the terminal and run AI-powered crash predictions on any NSE stock — real-time, under 1 second, zero compromise.</p>
     <div class="cta-btns">
       <a href="/dashboard.html" class="btn-p" style="font-size:.65rem;padding:14px 40px;">▶ LAUNCH TERMINAL</a>
       <a href="#features" class="btn-s" style="font-size:.62rem;">EXPLORE FEATURES →</a>
@@ -798,7 +798,7 @@
     <a href="#benefits" class="f-link">ABOUT</a>
     <a href="/dashboard.html" class="f-link">TERMINAL</a>
   </div>
-  <div class="f-copy">© 2026 FLASHGUARD · AI FLASH CRASH DETECTION · BiGRU + ATTENTION · 15.9M NIFTY BARS · POWERED BY KERAS & UPSTOX API</div>
+  <div class="f-copy">© 2026 FLASHGUARD · AI FLASH CRASH DETECTION · BiGRU + ATTENTION · 102K PARAMETERS · POWERED BY KERAS & UPSTOX API</div>
 </footer>
 
 <script>
