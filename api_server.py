@@ -486,6 +486,12 @@ def dashboard():
         if (d/"dashboard.html").exists(): return send_from_directory(str(d),"dashboard.html")
     return "dashboard.html not found", 404
 
+@app.route("/login.html")
+def login():
+    for d in (FRONTEND, BASE_DIR):
+        if (d/"login.html").exists(): return send_from_directory(str(d),"login.html")
+    return "login.html not found", 404
+
 @app.route("/<path:f>")
 def static_files(f):
     for d in (FRONTEND, BASE_DIR):
